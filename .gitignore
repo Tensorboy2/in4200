@@ -1,0 +1,17 @@
+*.exe
+*.txt
+
+# Ignore CMake cache and build files
+CMakeCache.txt
+CMakeFiles/
+CMakeError.log
+CMakeOutput.log
+
+# Ignore CMake-generated binaries
+Makefile
+cmake_install.cmake
+
+# Ignore build directories (you may want to ignore your build directory entirely)
+build/
+
+*.json
