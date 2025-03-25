@@ -21,6 +21,11 @@ int main(){
     read_graph_from_file2(filename, &N, &row_ptr, &col_idx, &val, &E);
     print_crs_format(&N, &E, &row_ptr, &col_idx, &val);
 
+
+    // Page rank 1:
+    double d=0.85, epsilon=1e-4, scores;
+    Page_Rank_iterations1(N,hyperlink_matrix,d,epsilon,&scores);
+
     return 0;
 }
 

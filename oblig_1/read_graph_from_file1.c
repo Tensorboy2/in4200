@@ -3,7 +3,11 @@
 
 /**
  * A function that reads a txt file with node link information for a 
- * hyperlink matrix generation.
+ * hyperlink matrix generation. 
+ * 
+ * Takes each from and to node and stores it as an entry in a N by N matrix.
+ * Then normalizes each column.
+ * 
  * @param char pointer to the filename.
  * @param N pointer to the number of nodes.
  * @param hyperlink_matrix pointer to the hyperlink matrix.

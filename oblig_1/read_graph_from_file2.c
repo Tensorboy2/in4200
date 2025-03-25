@@ -4,6 +4,11 @@
 /**
  * A function that reads a txt file with node link information for a 
  * hyperlink matrix generation but stores it in CRS format.
+ * 
+ * Stores a compressed row verion of the sparse hyperlink matrix.
+ * Stores each non-zero value in val, the column index in col_idx,
+ * and the row number in row_ptr.
+ * 
  * @param char pointer to the filename.
  * @param N pointer to the number of nodes.
  * @param row_ptr pointer to the rows.
@@ -30,32 +35,45 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
 
     fgets(line, sizeof(line),fptr); // Read the forth line: # FromNodeId    ToNodeId
 
-    // Allocate the arrays for storage:
-    *row_ptr = (int*)calloc((*N+1), sizeof(int)); // Allocate the row pointers, should equal number of Nodes + 1
-    *col_idx = (int*)malloc(*E * sizeof(int)); // Allocate the column pointers, should equal number of Edges
-    *val = (double*)malloc(*E * sizeof(double)); // Allocate the value pointers, should equal number of Edges
-
-    int* edge_count = (int*)calloc(*N, sizeof(int)); // Array to count edges for each row
-    int edge_idx = 0; // current idex in col_idx and val
-
     
-    for (int i = 0; i < *E; i++){ // For each edge in graph
-        if (fgets(line, sizeof(line), fptr)){ // Read the edge line from the file
-            int from, to; // Allocate the from and to node numbers
-            if (sscanf(line, "%d %d", &from, &to)==2){ // Check that we get both from and to node
-                if ((from != to) && from<*N && to<*N){ // Handle self links and illegal links
-                    (*col_idx)[edge_idx] = to; // Store the column index
-                    (*val)[edge_idx] = 1.0; // Mark the value
-                    edge_count[from]++; // Increment edge count
-                    edge_idx++; // Increment edge index
+    int* edge_count = (int*)calloc(*N, sizeof(int)); // Array to count edges for each row
+    // First Pass
+    for (int i = 0; i < *E; i++) { 
+        if (fgets(line, sizeof(line), fptr)) {
+            int from, to;
+            if (sscanf(line, "%d %d", &from, &to) == 2) {
+                if (from != to && from < *N && to < *N) {
+                    edge_count[from]++; // Count outgoing edges for each node
                 }
             }
         }
     }
     
+    // Allocate the arrays for storage:
+    *row_ptr = (int*)calloc((*N+1), sizeof(int)); // Allocate the row pointers, should equal number of Nodes + 1
+    *col_idx = (int*)malloc(*E * sizeof(int)); // Allocate the column pointers, should equal number of Edges
+    *val = (double*)malloc(*E * sizeof(double)); // Allocate the value pointers, should equal number of Edges
+    int edge_idx = 0; // current idex in col_idx and val
+    
     (*row_ptr)[0] = 0; // Starting index
     for (int i = 1; i <= *N; i++){
         (*row_ptr)[i] = (*row_ptr)[i-1] + edge_count[i-1]; // Store row indices 
+    }
+    (*row_ptr)[*N] = *E; // Starting index
+    
+    rewind(fptr); // Rewind to the beginning of the file for the second pass
+
+    // Now populate col_idx and val based on the edge data
+    while (fgets(line, sizeof(line), fptr)) {
+        int from, to;
+        if (sscanf(line, "%d %d", &from, &to) == 2) {
+            if (from != to && from < *N && to < *N) {
+                // Place the column index and value in the CSR format
+                (*col_idx)[edge_idx] = to;  // Store the column index (destination node)
+                (*val)[edge_idx] = 1.0;      // Value is typically 1.0 for an adjacency matrix
+                edge_idx++; // Increment edge index for the next entry in col_idx and val
+            }
+        }
     }
     
     // Normalize:
