@@ -49,7 +49,7 @@ void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, 
             if (sscanf(line, "%d %d", &from, &to)==2){ // Check that we get both from and to node
                 if ((from != to) && from<*N && to<*N){ // Handle self links and illegal links
                     (*hyperlink_matrix)[to][from] = 1.0; // Set the hyperlink entry to 1 for that linkage
-                    count[from]++; // increment the from node index
+                    count[from]++; // Increment the from node index
                 }
             }
         }
@@ -57,7 +57,9 @@ void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, 
     // Normalize:
     for (int i = 0; i < *N; i++){
         for (int j = 0; j < *N; j++) {
-            (*hyperlink_matrix)[i][j]/=count[j];
+            if (count[j]!=0){ // Handel dangling page normalization
+                (*hyperlink_matrix)[i][j]/=count[j];
+            }
         }
         printf("\n");
     }
