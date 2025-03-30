@@ -24,7 +24,7 @@ void top_n_pages (int N, double *scores, int n){
                 idx = j;
             }
         }
-        printf("Score: %.4f, page number: %d", max, idx);
+        printf("Score: %6f, page number: %d", max, idx);
         printf("\n");
         scores[idx] = 0;
     }

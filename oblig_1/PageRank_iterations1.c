@@ -4,7 +4,7 @@
 #include <math.h>
 #include <string.h>
 
-bool stop(double *x, double *x_last, int N, double epsilon){
+bool stop_1(double *x, double *x_last, int N, double epsilon){
     double max_diff = 0;
     for (int i = 0; i < N; i++){
         double diff = fabs(x[i]-x_last[i]);
@@ -16,7 +16,7 @@ bool stop(double *x, double *x_last, int N, double epsilon){
 }
 
 
-void find_dangling(double **hyperlink_matrix, int N, int *dangling){
+void find_dangling_1(double **hyperlink_matrix, int N, int *dangling){
     for (int i = 0; i<N; i++){
         int is_dangling = 1; // Assume current col is dangling
         for (int j = 0; j<N; j++){
@@ -29,10 +29,9 @@ void find_dangling(double **hyperlink_matrix, int N, int *dangling){
     }
 }
 
-void new_x(double *x, double *x_last, int N, double d, double **hyperlink_matrix){
-    memcpy(x_last, x, N * sizeof(double));
+void new_x_1(double *x, double *x_last, int N, double d, double **hyperlink_matrix){
     int *dangling = calloc(N,sizeof(int));
-    find_dangling(hyperlink_matrix,N,dangling); 
+    find_dangling_1(hyperlink_matrix,N,dangling); 
     double W = 0;
     for (int i = 0; i < N; i++){
         if (dangling[i]){
@@ -70,17 +69,14 @@ void Page_Rank_iterations1 (int N, double **hyperlink_matrix, double d, double e
     double *x_last = (double*)calloc(N,sizeof(double));
     int count = 0;
     do {
-        new_x(x,x_last,N,d,hyperlink_matrix);
+        memcpy(x_last, x, N * sizeof(double));
+
+        new_x_1(x,x_last,N,d,hyperlink_matrix);
         count++;
-    } while ((stop(x,x_last, N, epsilon)));
+    } while ((stop_1(x,x_last, N, epsilon)));
     
     printf("Converged after %d iterations.\n",count);
     memcpy(scores, x, N * sizeof(double));
-    // printf("Scores:\n");
-    // for (int i = 0; i < N; i++){
-    //     printf("%.4f ", scores[i]);
-    // }
-    // printf("\n");
     free(x);
     free(x_last);
 }

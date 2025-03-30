@@ -35,15 +35,20 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
 
     fgets(line, sizeof(line),fptr); // Read the forth line: # FromNodeId    ToNodeId
 
-    
-    int* edge_count = (int*)calloc(*N, sizeof(int)); // Array to count edges for each row
-    // First Pass
+    int* incoming_count = (int*)calloc(*N, sizeof(int));
+    int* outgoing_count = (int*)calloc(*N, sizeof(int));
+
+
+    // First pass:
+    int valid_edges = 0;
     for (int i = 0; i < *E; i++) { 
         if (fgets(line, sizeof(line), fptr)) {
             int from, to;
             if (sscanf(line, "%d %d", &from, &to) == 2) {
                 if (from != to && from < *N && to < *N) {
-                    edge_count[from]++; // Count outgoing edges for each node
+                    incoming_count[to]++;
+                    outgoing_count[from]++;
+                    valid_edges++;
                 }
             }
         }
@@ -51,57 +56,45 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
     
     // Allocate the arrays for storage:
     *row_ptr = (int*)calloc((*N+1), sizeof(int)); // Allocate the row pointers, should equal number of Nodes + 1
-    *col_idx = (int*)malloc(*E * sizeof(int)); // Allocate the column pointers, should equal number of Edges
-    *val = (double*)malloc(*E * sizeof(double)); // Allocate the value pointers, should equal number of Edges
-    int edge_idx = 0; // current idex in col_idx and val
-    
-    (*row_ptr)[0] = 0; // Starting index
-    for (int i = 1; i <= *N; i++){
-        (*row_ptr)[i] = (*row_ptr)[i-1] + edge_count[i-1]; // Store row indices 
+    *col_idx = (int*)calloc(valid_edges, sizeof(int)); // Allocate the column pointers, should equal number of Edges
+    *val = (double*)calloc(valid_edges, sizeof(double)); // Allocate the value pointers, should equal number of Edges
+
+    int* current_position = (int*)malloc(*N * sizeof(int));
+
+    (*row_ptr)[0] = 0;
+    for (int i = 1; i <= *N; i++) {
+        (*row_ptr)[i] = (*row_ptr)[i - 1] + incoming_count[i - 1];
     }
-    (*row_ptr)[*N] = *E; // Starting index
+    int total_nonzeros = (*row_ptr)[*N];
+    for (int i = 0; i < *N; i++) {
+        current_position[i] = (*row_ptr)[i];
+    }
     
     rewind(fptr); // Rewind to the beginning of the file for the second pass
 
-    // Now populate col_idx and val based on the edge data
+    fgets(line, sizeof(line), fptr); // Skip first line
+    fgets(line, sizeof(line), fptr); // Skip second line
+    fgets(line, sizeof(line), fptr); // Skip third line
+    fgets(line, sizeof(line), fptr); // Skip fourth line
+
+
+    // Second pass:
     while (fgets(line, sizeof(line), fptr)) {
         int from, to;
         if (sscanf(line, "%d %d", &from, &to) == 2) {
             if (from != to && from < *N && to < *N) {
-                // Place the column index and value in the CSR format
-                (*col_idx)[edge_idx] = to;  // Store the column index (destination node)
-                (*val)[edge_idx] = 1.0;      // Value is typically 1.0 for an adjacency matrix
-                edge_idx++; // Increment edge index for the next entry in col_idx and val
+                int insert_pos = current_position[to];
+                (*col_idx)[insert_pos] = from;  // Store the column index (destination node)
+                (*val)[insert_pos] = 1.0/outgoing_count[from];      // normalize by column number
+                current_position[to]++; // Increment edge index for the next entry in col_idx and val
             }
         }
     }
-    
-    // Normalize:
-    double *count = (double*)calloc(*N, sizeof(double)); // Temp array of out going links
-    int start,end;
-    for (int i=0; i < *N; i++){
-        start = (*row_ptr)[i];
-        end = (*row_ptr)[i+1];
-        for (int j = start; j < end; j++){
-            count[(*col_idx)[j]]++; // Increment count
-        }
-    }
-    for (int i=0; i < *N; i++){
-        start = (*row_ptr)[i];
-        end = (*row_ptr)[i+1];
-        for (int j = start; j < end; j++){
-            if (edge_count[j]>0){
-                (*val)[j] /= count[(*col_idx)[j]]; // Normalize column
-            }
-        }
-    }
-
-
     
     // Free:
-    free(edge_count);
-    free(count);
-
+    free(current_position);
+    free(incoming_count);
+    free(outgoing_count);
     fclose(fptr); // Close the file reader
 }
 
@@ -129,7 +122,7 @@ void print_crs_format(int *N, int *E, int **row_ptr, int ** col_idx, double **va
     printf("\n");
 
     printf("Values:\n");
-    for (int i = 0; i <= *N; i++){
+    for (int i = 0; i < *E; i++){
         printf("%.1f ",(*val)[i]);
     }
 
