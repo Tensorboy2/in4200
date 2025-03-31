@@ -1,8 +1,8 @@
 *.exe
-*.txt
+# *.txt
 
 # Ignore CMake cache and build files
-CMakeCache.txt
+# CMakeCache.txt
 CMakeFiles/
 CMakeError.log
 CMakeOutput.log

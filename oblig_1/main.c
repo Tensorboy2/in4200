@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     int N, E; // Number of nodes and edges
     double **hyperlink_matrix; // Hyperlink matrix pointer
     read_graph_from_file1(filename, &N, &hyperlink_matrix, &E); // Use read_graph_from_file1
-    print_hyperlink_matrix(&N, &hyperlink_matrix); // Optional print of hyperlink matrix
+    // print_hyperlink_matrix(&N, &hyperlink_matrix); // Optional print of hyperlink matrix
     double *scores_small = (double *)malloc(N * sizeof(double)); // Allocate score array
     // printf("Total nodes %d\n", N); // Print total nodes
     Page_Rank_iterations1(N,hyperlink_matrix,d,epsilon,scores_small); // Calculate page rank scores
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
     double *val; // Values pointer (CRS format)
     read_graph_from_file2(filename, &N, &row_ptr, &col_idx, &val, &E); // Use read_graph_from_file2
     // printf("Total nodes %d\n", N); // Print total nodes
-    print_crs_format(&N, &E, &row_ptr, &col_idx, &val); // Optional print of crs format
+    // print_crs_format(&N, &E, &row_ptr, &col_idx, &val); // Optional print of crs format
     double *scores_large = (double *)malloc(N * sizeof(double)); // Allocate score array
     Page_Rank_iterations2(N,row_ptr,col_idx,val,d,epsilon,scores_large); // Calculate page rank scores
     top_n_pages(N,scores_large,n);

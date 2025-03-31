@@ -58,7 +58,7 @@ void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, 
     for (int i = 0; i < *N; i++){
         for (int j = 0; j < *N; j++) {
             if (count[j]!=0){ // Handel dangling page normalization
-                (*hyperlink_matrix)[i][j]/=count[j];
+                (*hyperlink_matrix)[i][j]/=count[j]; // Normalization
             }
         }
         printf("\n");
@@ -69,6 +69,8 @@ void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, 
 
     fclose(fptr); // Close the file reader
 }
+
+
 /**
  * Function for printing hyperlink matrix
  * @param N pointer to num nodes.
