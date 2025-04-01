@@ -1,23 +1,7 @@
 #include <stdlib.h>
 #include "function_declarations.h"
 
-/**
- * A function that reads a txt file with node link information for a 
- * hyperlink matrix generation but stores it in CRS format.
- * 
- * Stores a compressed row verion of the sparse hyperlink matrix.
- * Stores each non-zero value in val, the column index in col_idx,
- * and the row number in row_ptr.
- * 
- * @param char pointer to the filename.
- * @param N pointer to the number of nodes.
- * @param row_ptr pointer to the rows.
- * @param col_idx pointer to the column index.
- * @param val pointer to the values.
- * @param E pointer to the number of edges.
- * @see 
- * @return 
- */
+
 void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx, double **val, int *E){
     FILE* fptr = fopen(filename, "r"); // Open file with file pointer
     if (fptr == NULL){ // Check that the file pointer points to something
@@ -41,8 +25,8 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
 
     // First pass:
     int valid_edges = 0; // Initialize the number of valid edges in the graph
-    for (int i = 0; i < *E; i++) { // Loop over each edge in the file  
-        if (fgets(line, sizeof(line), fptr)) { // Read the line in the file
+    for (int i = 0; i < *E; i++) {  
+        if (fgets(line, sizeof(line), fptr)) {
             int from, to; // Initialize NodeIDs
             if (sscanf(line, "%d %d", &from, &to) == 2) { // Check that both from and to node is in the line
                 if (from != to && from < *N && to < *N) { // Check that it is not a self link or out of bounds link
@@ -62,7 +46,7 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
     int* current_position = (int*)malloc(*N * sizeof(int)); // Current position
 
     (*row_ptr)[0] = 0; // Rowpointer starts at zero
-    for (int i = 1; i <= *N; i++) { // For each node in graph
+    for (int i = 1; i <= *N; i++) {
         (*row_ptr)[i] = (*row_ptr)[i - 1] + incoming_count[i - 1]; // The i'th row pointer is the last pointer pluss the number of incoming links
     }
     // int total_nonzeros = (*row_ptr)[*N]; // Set the number of valid edges 
@@ -72,10 +56,11 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
     
     rewind(fptr); // Rewind to the beginning of the file for the second pass
 
-    fgets(line, sizeof(line), fptr); // Skip first line
-    fgets(line, sizeof(line), fptr); // Skip second line
-    fgets(line, sizeof(line), fptr); // Skip third line
-    fgets(line, sizeof(line), fptr); // Skip fourth line
+    // Skip first 4 lines:
+    fgets(line, sizeof(line), fptr);
+    fgets(line, sizeof(line), fptr); 
+    fgets(line, sizeof(line), fptr);
+    fgets(line, sizeof(line), fptr); 
 
 
     // Second pass:
@@ -98,15 +83,7 @@ void read_graph_from_file2 (char *filename, int *N, int **row_ptr, int **col_idx
     fclose(fptr); // Close the file reader
 }
 
-/**
- * Function for printing CRS format of hyperlink matrix
- * 
- * @param N pointer to the number of nodes.
- * @param E pointer to the number of edges.
- * @param row_ptr pointer to the rows.
- * @param col_idx pointer to the column index.
- * @param val pointer to the values.
- */
+
 void print_crs_format(int *N, int *E, int **row_ptr, int ** col_idx, double **val){
     printf("Row pointers:\n");
     for (int i = 0; i <= *N; i++){

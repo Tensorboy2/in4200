@@ -1,6 +1,6 @@
 # Obligatory assignment 1
 ## By Sigurd Vargdal.
-
+This project aims to implement the iterative PageRank algorithm for graphs such as hyperlink graphs for web pages, and return the top $n$ pages in the graph. For documentation; global function used in the main files have docstring in the include/function_declarations.h file, while local functions have their docstring in the respective .c file.
 
 
 

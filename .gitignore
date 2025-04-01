@@ -13,5 +13,5 @@ cmake_install.cmake
 
 # Ignore build directories (you may want to ignore your build directory entirely)
 build/
-
+*.zip
 *.json

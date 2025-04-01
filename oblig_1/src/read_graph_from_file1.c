@@ -1,20 +1,7 @@
 #include <stdlib.h>
 #include "function_declarations.h"
 
-/**
- * A function that reads a txt file with node link information for a 
- * hyperlink matrix generation. 
- * 
- * Takes each from and to node and stores it as an entry in a N by N matrix.
- * Then normalizes each column.
- * 
- * @param char pointer to the filename.
- * @param N pointer to the number of nodes.
- * @param hyperlink_matrix pointer to the hyperlink matrix.
- * @param E pointer to the number of edges.
- * @see 
- * @return 
- */
+
 void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, int *E){
     FILE* fptr = fopen(filename, "r"); // Open file with file pointer
     if (fptr == NULL){ // Check that the file pointer points to something
@@ -43,8 +30,8 @@ void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, 
     double *count = (double*)calloc(*N, sizeof(double)); // Temp array of out going links
 
     // Loop over all edges and store them in hyperlink matrix:
-    for (int i = 0; i < *E; i++){ // For each edge in graph
-        if (fgets(line, sizeof(line), fptr)){ // Read the edge line from the file
+    for (int i = 0; i < *E; i++){
+        if (fgets(line, sizeof(line), fptr)){
             int from, to; // Allocate the from and to node numbers
             if (sscanf(line, "%d %d", &from, &to)==2){ // Check that we get both from and to node
                 if ((from != to) && from<*N && to<*N){ // Handle self links and illegal links
@@ -71,11 +58,6 @@ void read_graph_from_file1 (char *filename, int *N, double ***hyperlink_matrix, 
 }
 
 
-/**
- * Function for printing hyperlink matrix
- * @param N pointer to num nodes.
- * @param hyperlink_matrix pointer to hyperlink matrix
- */
 void print_hyperlink_matrix(int *N, double ***hyperlink_matrix){
     printf("The hyper link matrix is:\n"); 
     for (int i = 0; i < *N; i++){

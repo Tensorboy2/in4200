@@ -4,12 +4,7 @@
 #include <omp.h>
 #include <string.h>
 
-/**
- * Function for printing out the top n pages.
- * @param N number of pages.
- * @param scores list of page rank scores
- * @param n number of pages to show
- */
+
 void top_n_pages (int N, double *scores, int n){
     int* top_n_idx = malloc(n*sizeof(int));
     double* top_n_scores = malloc(n*sizeof(double));
@@ -33,12 +28,7 @@ void top_n_pages (int N, double *scores, int n){
     free(top_n_scores);
 }
 
-/**
- * OpenMP version of finding to n pages.
- * @param N number of pages.
- * @param scores list of page rank scores
- * @param n number of pages to show
- */
+
 void top_n_pages_omp (int N, double *scores, int n){
 
     // Storage arrays:
@@ -49,7 +39,7 @@ void top_n_pages_omp (int N, double *scores, int n){
 
     // Find n highest scores
     for (int i = 0; i < n; i++){
-        // Global first guess
+        // Global first guess:
         double max = -1.0; // No negative scores can exist
         int idx = -1; // Assume the best is outside scope
         #pragma omp parallel // Split to multi processes 

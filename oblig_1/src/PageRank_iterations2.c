@@ -82,16 +82,7 @@ void new_x_2(double *x, double *x_last, int N, double d, int *row_ptr, int *col_
     free(dangling);
 }
 
-/**
- * Page rank iteration function for the CRS formatted hyper link matrix.
- * @param N        Number of nodes in the graph.
- * @param row_ptr  Pointer to the row offsets array in CRS format.
- * @param col_ptr  Pointer to the column indices array in CRS format.
- * @param val      Pointer to the values array in CRS format, representing transition probabilities.
- * @param d        Damping factor (typically set to 0.85).
- * @param epsilon  Convergence threshold; iteration stops when score changes are smaller than epsilon.
- * @param scores   Output array to store the final PageRank scores of each node.
- */
+
 void Page_Rank_iterations2 (int N, int *row_ptr, int *col_ptr, double *val, double d, double epsilon, double *scores){
     double *x = (double*)malloc(N * sizeof(double));
     for (int i = 0; i < N; i++){
@@ -189,19 +180,7 @@ bool stop_2_omp(double *x, double *x_last, int N, double epsilon){
     return max_diff > epsilon; // Return true if bigger so that while loop continues
 }
 
-/**
- * OpenMP version of the crs version of page rank iteration algorithm.
- * 
- * The real parallelism happens in new_x_2_omp.
- * 
- * @param N        Number of nodes in the graph.
- * @param row_ptr  Pointer to the row offsets array in CRS format.
- * @param col_ptr  Pointer to the column indices array in CRS format.
- * @param val      Pointer to the values array in CRS format, representing transition probabilities.
- * @param d        Damping factor (typically set to 0.85).
- * @param epsilon  Convergence threshold; iteration stops when score changes are smaller than epsilon.
- * @param scores   Output array to store the final PageRank scores of each node.
- */
+
 void Page_Rank_iterations2_omp (int N, int *row_ptr, int *col_ptr, double *val, double d, double epsilon, double *scores){
     double *x = (double*)malloc(N * sizeof(double));
     for (int i = 0; i < N; i++){

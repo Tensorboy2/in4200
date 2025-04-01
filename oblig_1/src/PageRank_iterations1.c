@@ -84,15 +84,7 @@ void new_x_1(double *x, double *x_last, int N, double d, double **hyperlink_matr
 }
 
 
-/**
- * Page rank iterations version 1
- * @param N num nodes
- * @param hyperlink_matrix pointer to hyperlink matrix
- * @param d relax parameter
- * @param epsilon stop condition
- * @param scores score pointer
- */
-void Page_Rank_iterations1 (int N, double **hyperlink_matrix, double d, double epsilon, double *scores){
+void Page_Rank_iterations1(int N, double **hyperlink_matrix, double d, double epsilon, double *scores){
 
     double *x = (double*)malloc(N * sizeof(double)); // Allocate initial scores
     for (int i = 0; i < N; i++){
@@ -100,7 +92,6 @@ void Page_Rank_iterations1 (int N, double **hyperlink_matrix, double d, double e
     }
     double *x_last = (double*)calloc(N,sizeof(double)); // Allocate previous scores
     int count = 0; // Iteration counter
-
     do {
         memcpy(x_last, x, N * sizeof(double)); // Copy the last to the new before updating the new one
 

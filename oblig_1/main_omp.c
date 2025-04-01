@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @brief Prints the page rank of a given graph using omp
+ */
 int main(int argc, char *argv[]){
-    if (argc != 5) { // Error handel for sys args
+    if (argc != 5) {
         printf("Usage: %s <graph> <damping_factor> <epsilon> <top_n>\n", argv[0]);
         return 1;
     }
@@ -19,7 +22,6 @@ int main(int argc, char *argv[]){
 
     printf("OMP:\n");
     read_graph_from_file2(filename, &N, &row_ptr, &col_idx, &val, &E); // Use read_graph_from_file2
-    // printf("Total nodes %d\n", N); // Print total nodes
     // print_crs_format(&N, &E, &row_ptr, &col_idx, &val); // Optional print of crs format
     double *scores_large = (double *)malloc(N * sizeof(double)); // Allocate score array
     Page_Rank_iterations2_omp(N,row_ptr,col_idx,val,d,epsilon,scores_large); // Calculate page rank scores

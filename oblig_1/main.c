@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include "function_declarations.h"
 
-// char* filename = "../graphs/simple-webgraph.txt"; // path to small graph
-// char* filename = "../graphs/100nodes_graph.txt"; // path to medium graph
-// char* filename = "../graphs/web-stanford.txt"; // path to large graph
-
+/**
+ * @brief Prints the page rank of a given graph
+ */
 int main(int argc, char *argv[]){
-    if (argc != 6) { // Error handel for sys args
+    if (argc != 6) {
         printf("Usage: %s <small_graph> <large_graph> <damping_factor> <epsilon> <top_n>\n", argv[0]);
         return 1;
     }
@@ -28,7 +27,6 @@ int main(int argc, char *argv[]){
     read_graph_from_file1(filename, &N, &hyperlink_matrix, &E); // Use read_graph_from_file1
     // print_hyperlink_matrix(&N, &hyperlink_matrix); // Optional print of hyperlink matrix
     double *scores_small = (double *)malloc(N * sizeof(double)); // Allocate score array
-    // printf("Total nodes %d\n", N); // Print total nodes
     Page_Rank_iterations1(N,hyperlink_matrix,d,epsilon,scores_small); // Calculate page rank scores
     top_n_pages(N,scores_small,n);
     
@@ -41,7 +39,6 @@ int main(int argc, char *argv[]){
     int *col_idx; // Column indices (CRS format)
     double *val; // Values pointer (CRS format)
     read_graph_from_file2(filename, &N, &row_ptr, &col_idx, &val, &E); // Use read_graph_from_file2
-    // printf("Total nodes %d\n", N); // Print total nodes
     // print_crs_format(&N, &E, &row_ptr, &col_idx, &val); // Optional print of crs format
     double *scores_large = (double *)malloc(N * sizeof(double)); // Allocate score array
     Page_Rank_iterations2(N,row_ptr,col_idx,val,d,epsilon,scores_large); // Calculate page rank scores
