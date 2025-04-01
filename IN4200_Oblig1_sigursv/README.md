@@ -16,7 +16,7 @@ Optional set thread count:
 ```bash
 cmake -DTHREAD_COUNT=8 ..
 ```
-
+Run build:
 ```bash
 cmake --build .
 ```
