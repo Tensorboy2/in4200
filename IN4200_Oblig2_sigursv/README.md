@@ -1,4 +1,4 @@
-# Obligatory assignment 1
+# Obligatory assignment 2
 ## By Sigurd Vargdal.
 This project aims to implement the 3D Gauss-Seidel algorithm and parallelizing it with MPI.
 
@@ -12,9 +12,18 @@ cmake ..
 ```
 Optional set thread count: 
 ```bash
-cmake -DTHREAD_COUNT=8 ..
+cmake -DTHREAD_COUNT=2 ..
 ```
 Run build:
 ```bash
 cmake --build .
+```
+
+Execute serial:
+```bash
+./main
+```
+Execute mpi:
+```bash
+mpirun -np2 ./main_mpi
 ```
