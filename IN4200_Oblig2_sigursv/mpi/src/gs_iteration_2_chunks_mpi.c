@@ -35,7 +35,7 @@ void GS_iteration_2_chunks_mpi(int my_rank, int kmax, int my_jmax, int imax, dou
                 my_phi[k_2][my_jmax-1], imax, MPI_DOUBLE, 1, tag,
                 my_phi[k][my_jmax], imax, MPI_DOUBLE, 1, tag,
                 MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            printf("rank: %d, my_jmax: %d\n",my_rank,my_jmax);
+            // printf("rank: %d, my_jmax: %d\n",my_rank,my_jmax);
             
             for (int j = 1; j <= my_jmax - 1; j++){
                 for (int i = 1; i < imax - 1; i++){

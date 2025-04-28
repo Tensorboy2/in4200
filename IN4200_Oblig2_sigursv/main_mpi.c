@@ -33,11 +33,15 @@ int main(int argc, char **argv){
 
 
     // Split domain:
-    int j_split = jmax / 2; 
-    if (jmax % 2 != 0 && rank == 0) {
-        j_split += 1; 
+    int j_split = jmax / 2;
+    int my_jmax;
+    if (jmax % 2 != 0 ) {
+        j_split += (rank == 0) ? 1 : 0;
+        my_jmax = (rank == 0) ? j_split : jmax - j_split;
+    } else {
+        my_jmax = (rank == 0) ? j_split : jmax - j_split + 1;
     }
-    int my_jmax = (rank == 0) ? j_split : jmax - j_split;
+    
 
 
     // Array allocation pluss neighbour row: 
@@ -157,23 +161,16 @@ int main(int argc, char **argv){
         }
         clock_t end = clock();
         double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-        printf("Diff matrix:\n");
-        for (int k = 1; k < kmax - 1; k++) {
-            for (int j = 1; j < jmax - 1; j++) {
-                for (int i = 1; i < imax - 1; i++) {
-                    printf("%f ",array_serial[k][j][i]-array_mpi[k][j][i]);
-                }
-            printf("\n");
-            }
-            printf("\n");
-            // for (int j = 1; j < jmax - 1; j++) {
-            //     for (int i = 1; i < imax - 1; i++) {
-            //         printf("%f ",array_mpi[k][j][i]);
-            //     }
-            //     printf("\n");
-            // }
-            // printf("\n");
-        }
+        // printf("Diff matrix:\n");
+        // for (int k = 1; k < kmax - 1; k++) {
+        //     for (int j = 1; j < jmax - 1; j++) {
+        //         for (int i = 1; i < imax - 1; i++) {
+        //             printf("%f ",array_serial[k][j][i]-array_mpi[k][j][i]);
+        //         }
+        //     printf("\n");
+        //     }
+        //     printf("\n");
+        // }
         printf("num iters=%d, kmax=%d, jmax=%d, imax=%d, diff=%g\n", 
             num_iters, kmax, jmax, imax, 
             euclidean_distance(kmax,jmax,imax,array_mpi,array_serial));
