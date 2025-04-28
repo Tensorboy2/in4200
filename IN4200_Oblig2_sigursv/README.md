@@ -10,10 +10,7 @@ Run CMake config (compiles with default 4 threads for OpenMP):
 ```bash
 cmake ..
 ```
-Optional set thread count: 
-```bash
-cmake -DTHREAD_COUNT=2 ..
-```
+
 Run build:
 ```bash
 cmake --build .

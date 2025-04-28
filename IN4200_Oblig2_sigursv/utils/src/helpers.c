@@ -3,31 +3,51 @@
 #include <time.h>
 #include "helpers.h"
 
-void allocate_array3D(int kmax, int jmax, int imax, double ****array){
-    int ***arr =  malloc(kmax*sizeof(double**));
-    // int data =  malloc(kmax*jmax*imax*sizeof(double));
 
-    for (int k; k<kmax; k++){
-        arr[k] = malloc(jmax*sizeof(double*));
-        for (int j = 0; j<jmax;j++){
-            arr[k][j] = malloc(imax*sizeof(double*));
-        }
-    }
-}
-
-void fill_array(int kmax, int jmax, int imax, double ****array){
-    srand(time(NULL));
-    for (int k=1;k<kmax-1;k++){
-        for (int j=1;j<jmax-1;j++){
-            for (int i=1;i<imax-1;i++){
+void allocate_array3D(int kmax, int jmax, int imax, double ****array) {
+    double ***arr3D = malloc(kmax * sizeof(double **));
+    for (int k = 0; k < kmax; k++) {
+        arr3D[k] = malloc(jmax * sizeof(double *));
+        for (int j = 0; j < jmax; j++) {
+            arr3D[k][j] = malloc(imax * sizeof(double));
+            for (int i = 0; i < imax; i++){
                 if (i == 0 || j == 0 || k == 0 || i == imax-1 || j == jmax-1 || k == kmax-1)
-                    *array[k][j][i] = 0.0;  // boundary
+                    arr3D[k][j][i] = 0.0;  // boundary
                 else
-                    *array[k][j][i] = (double)rand() / RAND_MAX;  // random interior
+                    arr3D[k][j][i] = 1.0;  // random interior
             }
         }
     }
+    *array = arr3D;
 }
+
+double* flatten_array3D(int kmax, int jmax, int imax, double ***array){
+    double* flatt_array = malloc(kmax * jmax * imax * sizeof(double));
+    int idx = 0;
+        for (int k = 0; k < kmax; k++) {
+            for (int j = 0; j < jmax; j++) {
+                for (int i = 0; i < imax; i++) {
+                    flatt_array[idx++] = array[k][j][i];
+                }
+            }
+        }
+    return flatt_array;
+}
+
+double*** reconstruct_array3D(int kmax, int jmax, int imax, double* flatt_array){
+    double ***arr3D;
+    allocate_array3D(kmax,jmax,imax,&arr3D);
+    int idx = 0;
+        for (int k = 0; k < kmax; k++) {
+            for (int j = 0; j < jmax; j++) {
+                for (int i = 0; i < imax; i++) {
+                    arr3D[k][j][i] = flatt_array[idx++];
+                }
+            }
+        }
+    return arr3D;
+}
+
 
 void free_array3D(double ***array, int kmax, int jmax) {
     if (!array) return;
@@ -38,15 +58,19 @@ void free_array3D(double ***array, int kmax, int jmax) {
     free(array);
 }
 
+
+// #include <math.h>
+#include <math.h>
 double euclidean_distance(int kmax, int jmax, int imax, double ***arr1, double ***arr2){
-    int k,j,i;
-    double dist;
-    for (k=0;k<kmax;k++){
-        for (j=0;j<jmax;j++){
-            for (i=0;i<imax;i++){
-                dist += (arr2[k][j][i]-arr1[k][j][i]);
+    double dist = 0;
+
+    for (int k = 0; k < kmax; k++){
+        for (int j = 0; j < jmax; j++){
+            for ( int i = 0; i < imax; i++){
+                double diff = arr2[k][j][i] - arr1[k][j][i];
+                dist += diff*diff;
             }
         }
     }
-    return dist;
+    return sqrt(dist);
 }

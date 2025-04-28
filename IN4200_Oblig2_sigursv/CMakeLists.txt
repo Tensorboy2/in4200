@@ -37,10 +37,12 @@ target_include_directories(main PUBLIC
     ${CMAKE_SOURCE_DIR}/serial/include
     ${CMAKE_SOURCE_DIR}/utils/include
 )
+target_link_libraries(main m)
 
-add_executable(main_mpi main_mpi.c ${MPI_SOURCES} ${UTIL_SOURCES})
+add_executable(main_mpi main_mpi.c ${MPI_SOURCES} ${SERIAL_SOURCES} ${UTIL_SOURCES})
 target_include_directories(main_mpi PUBLIC
     ${CMAKE_SOURCE_DIR}/mpi/include
+    ${CMAKE_SOURCE_DIR}/serial/include
     ${CMAKE_SOURCE_DIR}/utils/include
 )
-target_link_libraries(main_mpi MPI::MPI_C)
+target_link_libraries(main_mpi MPI::MPI_C m)
