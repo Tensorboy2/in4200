@@ -6,21 +6,27 @@ This project aims to implement the 3D Gauss-Seidel algorithm and parallelizing i
 ```bash
 mkdir build && cd build
 ```
-Run CMake config (compiles with default 4 threads for OpenMP):
+Run CMake config:
 ```bash
 cmake ..
 ```
-
 Run build:
 ```bash
 cmake --build .
 ```
 
+Both executables expect 4 commandline arguments:
+- n  (Int) Numbers of Gauss-Seidel iterations
+- kmax (Int) number of k dimensions
+- jmax (Int) number of j dimensions
+- imax (Int) number of i dimensions
+
 Execute serial:
 ```bash
-./main
+./main 10 10 10 10
 ```
+
 Execute mpi:
 ```bash
-mpirun -np2 ./main_mpi
+mpirun -np2 ./main_mpi 10 10 10 10
 ```

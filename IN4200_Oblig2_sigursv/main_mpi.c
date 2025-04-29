@@ -51,6 +51,7 @@ int main(int argc, char **argv){
 
     double ***array_mpi;
     if (rank == 0){
+        // Allocate full array:
         allocate_array3D(kmax,jmax,imax,&array_mpi);
         
         // Fill first chunk into rank 0:
@@ -79,7 +80,8 @@ int main(int argc, char **argv){
     } 
 
     
-    if (rank == 1) { // Receive dimensions and allocate the rank 1 array 
+    if (rank == 1) { 
+        // Receive dimensions and fill the rank 1 array :
         int recv_size = kmax * my_jmax * imax;
         double *receive_buffer = malloc(recv_size * sizeof(double));
         MPI_Recv(receive_buffer, recv_size, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
@@ -95,18 +97,20 @@ int main(int argc, char **argv){
         free(receive_buffer);
     }
     
-    MPI_Barrier(MPI_COMM_WORLD); // wait for each process
+    MPI_Barrier(MPI_COMM_WORLD); 
     
-    double t_start = MPI_Wtime(); // Start MPI timer
-    for (int n = 0; n < num_iters; n++){ // Iterate the MPI GS algorithm
+    // Perform 2 chunk Gauss Seidel with mpi: 
+    double t_start = MPI_Wtime(); // Use MPI Wall time for timing simulation
+    for (int n = 0; n < num_iters; n++){
         GS_iteration_2_chunks_mpi(rank, kmax, my_jmax, imax, my_phi);
     }
     
-    double t_end = MPI_Wtime(); // End MPI timer 
-    // MPI_Barrier(MPI_COMM_WORLD); // wait for each process
+    double t_end = MPI_Wtime();
+    MPI_Barrier(MPI_COMM_WORLD); // wait for each process
     
     
     if (rank == 1){
+        // Send result from rank 1 to rank 0:
         int send_size = kmax * (my_jmax - 1) * imax;
         double *send_buffer = malloc(send_size * sizeof(double));
         int idx = 0;
@@ -118,15 +122,17 @@ int main(int argc, char **argv){
             }
         }
         
-        MPI_Send(send_buffer, send_size, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); // send to rank 0
+        MPI_Send(send_buffer, send_size, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
         free(send_buffer);    
     }
     
     if (rank == 0){
+        // Receive results from rank 1:
         int other_jmax = jmax - j_split;
         int recv_size = kmax * other_jmax * imax;
         double *receive_buffer = malloc(recv_size* sizeof(double));
         MPI_Recv(receive_buffer, recv_size, MPI_DOUBLE, 1, 0, MPI_COMM_WORLD, &status);
+
         // Fill first chunk:
         int idx = 0;
         for (int k = 0; k < kmax; k++) {
@@ -161,16 +167,8 @@ int main(int argc, char **argv){
         }
         clock_t end = clock();
         double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-        // printf("Diff matrix:\n");
-        // for (int k = 1; k < kmax - 1; k++) {
-        //     for (int j = 1; j < jmax - 1; j++) {
-        //         for (int i = 1; i < imax - 1; i++) {
-        //             printf("%f ",array_serial[k][j][i]-array_mpi[k][j][i]);
-        //         }
-        //     printf("\n");
-        //     }
-        //     printf("\n");
-        // }
+        
+        // Compare results:
         printf("num iters=%d, kmax=%d, jmax=%d, imax=%d, diff=%g\n", 
             num_iters, kmax, jmax, imax, 
             euclidean_distance(kmax,jmax,imax,array_mpi,array_serial));

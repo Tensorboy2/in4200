@@ -28,7 +28,7 @@ void GS_iteration_2_chunks(int kmax, int jmax, int imax, double ***phi){
     }
 
     for (k = 2; k < kmax - 1; k++) {
-        // computation on left chunk at level k
+        // Computation on left chunk at level k:
         for (int j = 1; j < jmid; j++){
             for (int i = 1; i < imax - 1; i++){
                 phi[k][j][i] = (phi[k - 1][j][i] + phi[k][j - 1][i]
@@ -36,7 +36,7 @@ void GS_iteration_2_chunks(int kmax, int jmax, int imax, double ***phi){
                     + phi[k][j + 1][i] + phi[k + 1][j][i]) / 6.0;
             }
         }
-        // computation on right chunk at level k-1
+        // Computation on right chunk at level k-1:
         int k_2 = k - 1;
         for (int j = jmid; j < jmax - 1; j++){
             for (int i = 1; i < imax - 1; i++){

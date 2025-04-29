@@ -45,6 +45,7 @@ int main(int nargs, char **args){
     printf("Time spent normal: %f seconds\n", time_spent_normal);
     printf("Time spent 2 chunks: %f seconds\n", time_spent_2_chunks);
 
+    // Free arrays:
     free_array3D(arr1, kmax, jmax);
     free_array3D(arr2, kmax, jmax);
     
