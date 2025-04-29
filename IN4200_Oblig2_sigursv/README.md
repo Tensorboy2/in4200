@@ -26,7 +26,11 @@ Execute serial:
 ./main 10 10 10 10
 ```
 
-Execute mpi:
+Execute mpi (even jmax example):
 ```bash
-mpirun -np2 ./main_mpi 10 10 10 10
+mpirun -np 2 ./main_mpi 10 10 10 10
+```
+Execute mpi (odd jmax example):
+```bash
+mpirun -np 2 ./main_mpi 9 9 9 9
 ```

@@ -35,13 +35,7 @@ int main(int argc, char **argv){
     // Split domain:
     int j_split = jmax / 2;
     int my_jmax;
-    if (jmax % 2 != 0 ) {
-        j_split += (rank == 0) ? 1 : 0;
-        my_jmax = (rank == 0) ? j_split : jmax - j_split;
-    } else {
-        my_jmax = (rank == 0) ? j_split : jmax - j_split + 1;
-    }
-    
+    my_jmax = (rank == 0) ? j_split  : jmax - j_split + 1; // rank 0 gets j_split, rank 1 gets jmax-j_split+1 
 
 
     // Array allocation pluss neighbour row: 
