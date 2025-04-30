@@ -6,8 +6,7 @@
 
 
 void GS_iteration_2_chunks_mpi(int my_rank, int kmax, int my_jmax, int imax, double ***my_phi){
-    MPI_Status status;
-    int tag = 0;
+    int tag = 0; // Arbitrary tag 
 
     // First k is only a left chunk computation, but the left most row from right chunk is needed. This we send from rank 1, and receive with rank 0. 
     int k = 1;
@@ -33,24 +32,24 @@ void GS_iteration_2_chunks_mpi(int my_rank, int kmax, int my_jmax, int imax, dou
         int k_2 = k - 1;
 
         if (my_rank == 0){ 
-            MPI_Sendrecv(my_phi[k_2][my_jmax-1], imax, MPI_DOUBLE, 1, tag,
-                        my_phi[k][my_jmax], imax, MPI_DOUBLE, 1, tag,
-                        MPI_COMM_WORLD, MPI_STATUS_IGNORE
-            );
+            MPI_Sendrecv(my_phi[k_2][my_jmax-1], imax, MPI_DOUBLE, 1, tag, // Send second to last
+                        my_phi[k][my_jmax], imax, MPI_DOUBLE, 1, tag, // Receive last
+                        MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             
             for (int j = 1; j <= my_jmax - 1; j++){
                 for (int i = 1; i < imax - 1; i++){
                     my_phi[k][j][i] =  (my_phi[k - 1][j][i] + my_phi[k][j - 1][i]
                         + my_phi[k][j][i - 1] + my_phi[k][j][i + 1]
                         + my_phi[k][j + 1][i] + my_phi[k + 1][j][i]) / 6.0; 
-                    } 
-                }
+                } 
             }
+        }
             
-            if (my_rank == 1){
-                MPI_Sendrecv(my_phi[k][1], imax, MPI_DOUBLE, 0, tag,
-                            my_phi[k_2][0], imax, MPI_DOUBLE, 0, tag,
-                            MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        if (my_rank == 1){
+            MPI_Sendrecv(my_phi[k][1], imax, MPI_DOUBLE, 0, tag, // Send second
+                        my_phi[k_2][0], imax, MPI_DOUBLE, 0, tag, // Receive first
+                        MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
             for (int j = 1; j < my_jmax - 1; j++){
                 for (int i = 1; i < imax - 1; i++){
                     my_phi[k_2][j][i] = (my_phi[k_2 - 1][j][i] + my_phi[k_2][j - 1][i]

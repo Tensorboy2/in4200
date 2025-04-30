@@ -34,7 +34,7 @@ Time spent 2 chunks: 1.289453 seconds
 
 Execute mpi (even jmax example):
 ```bash
-mpirun -np 2 ./main_mpi 100 100 100
+mpirun -np 2 ./main_mpi 100 100 100 100
 ```
 Expected output:
 ```bash

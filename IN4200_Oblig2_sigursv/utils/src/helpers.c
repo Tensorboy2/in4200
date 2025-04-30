@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "helpers.h"
+#include <math.h>
 
 
 void allocate_array3D(int kmax, int jmax, int imax, double ****array) {
@@ -31,8 +32,6 @@ void free_array3D(double ***array, int kmax, int jmax) {
 }
 
 
-// #include <math.h>
-#include <math.h>
 double euclidean_distance(int kmax, int jmax, int imax, double ***arr1, double ***arr2){
     double dist = 0;
 
